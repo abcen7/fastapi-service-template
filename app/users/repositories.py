@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import with_async_session
@@ -10,3 +11,8 @@ class UsersRepository:
     async def create(self, user: User, session: AsyncSession) -> None:
         session.add(user)
         await session.commit()
+
+    @with_async_session
+    async def get_all(self, session: AsyncSession) -> list[User]:
+        query = await session.execute(select(User))
+        return query.scalars().all()

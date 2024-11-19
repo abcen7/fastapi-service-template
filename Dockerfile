@@ -1,9 +1,9 @@
-FROM python:3.11.4-alpine AS BASE
+FROM python:3.12.7-alpine AS BASE
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-WORKDIR /dankmemes_bot
+WORKDIR /fst
 
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt

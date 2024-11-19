@@ -1,12 +1,12 @@
 x-environment: &db-env
-  DB_HOST: postgres_db
+  DB_HOST: localhost
   DB_PORT: 5432
   DB_NAME: fst_db
   DB_USER: postgres
   DB_PASSWORD: postgres
 
 x-postgres-environment: &postgres-env
-  POSTGRES_HOST: postgres_db
+  POSTGRES_HOST: localhost
   POSTGRES_PORT: 5432
   POSTGRES_DB: fst_db
   POSTGRES_USER: postgres
@@ -19,6 +19,8 @@ services:
     restart: always
     volumes:
       - postgres_db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s

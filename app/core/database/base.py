@@ -10,7 +10,8 @@ class Base(DeclarativeBase):
 
     @declared_attr.directive
     def __tablename__(cls) -> str:
-        return f"{cls.__name__.lower()}s"
+        # TODO: change it to https://github.com/Netflix/dispatch/blob/master/src/dispatch/database/core.py#L51
+        return f"{cls.__name__.lower()}"
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     created_at: Mapped[Optional[datetime]] = mapped_column(
