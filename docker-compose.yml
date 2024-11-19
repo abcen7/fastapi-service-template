@@ -1,4 +1,4 @@
-x-environment: &db-env:
+x-environment: &db-env
   DB_HOST: postgres_db
   DB_PORT: 5432
   DB_NAME: dankmemes_db

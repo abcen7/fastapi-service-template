@@ -1,6 +1,6 @@
 from .models import User
-from .schemas import UserCreate
 from .repositories import UsersRepository
+from .schemas import UserCreate
 
 
 class UsersService:

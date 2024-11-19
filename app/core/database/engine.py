@@ -1,10 +1,12 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.core.settings import settings
 
-
-async_engine = create_async_engine(settings.db.build_postgres_url(), echo=settings.db.echo_debug_mode)
+async_engine = create_async_engine(
+    settings.db.build_postgres_url(), echo=settings.db.echo_debug_mode
+)
 async_session_maker = async_sessionmaker(async_engine, expire_on_commit=False)
 
 
