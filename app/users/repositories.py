@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,6 +15,6 @@ class UsersRepository:
         await session.commit()
 
     @with_async_session
-    async def get_all(self, session: AsyncSession) -> list[User]:
+    async def get_all(self, session: AsyncSession) -> Sequence[User]:
         query = await session.execute(select(User))
         return query.scalars().all()
