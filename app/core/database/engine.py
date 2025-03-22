@@ -1,8 +1,8 @@
-from typing import AsyncGenerator, Callable
+from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.core.settings import settings
+from app.core.config import settings
 
 async_engine = create_async_engine(
     settings.db.asyncpg_url.unicode_string(), echo=settings.db.ECHO_DEBUG_MODE
@@ -42,4 +42,4 @@ def with_async_session(func):
 
 
 def load_models():
-    from app.users.models import User
+    pass

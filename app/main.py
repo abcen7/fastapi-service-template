@@ -2,7 +2,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from app.core import settings
+from app.core.config import settings
 from app.core.lib import create_default_fastapi_app
 from app.core.router import api_router
 
