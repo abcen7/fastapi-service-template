@@ -1,14 +1,15 @@
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Callable, Never, Optional, TypeVar
+from typing import Any, AsyncIterator, Never, Optional
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from app.core.lib import main_logger, setup_monitoring
+from .logger import main_logger
+from .prometheus import setup_monitoring
 
 
 def create_default_fastapi_app(
-    title: str, prometheus_setup: Optional[bool] = False, **kwargs: FastAPI
+    title: str, prometheus_setup: Optional[bool] = False, **kwargs: Any
 ) -> FastAPI:
     """
     Create and configure a default FastAPI application with CORS middleware and optional Prometheus monitoring.
@@ -28,7 +29,11 @@ def create_default_fastapi_app(
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[Never]:
-        main_logger.info(f"{title} fastapi app is successfully connected to database")
+        from app.core.config import settings
+
+        main_logger.info(
+            f"{title} fastapi app is successfully connected to database {settings.db.NAME}"
+        )
         yield
         main_logger.info(f"Shutdown {title} fastapi app complete")
 
