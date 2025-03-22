@@ -1,9 +1,13 @@
 from contextlib import asynccontextmanager
 from typing import Any, AsyncIterator, Never, Optional
 
+import asyncpg.exceptions
 from fastapi import FastAPI
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.cors import CORSMiddleware
 
+from .exceptions import FailedConnectToDatabase
 from .logger import main_logger
 from .prometheus import setup_monitoring
 
@@ -30,6 +34,17 @@ def create_default_fastapi_app(
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[Never]:
         from app.core.config import settings
+
+        from ..database.engine import async_session_maker
+
+        async with async_session_maker() as session:
+            try:
+                test_stmt = await session.execute(text("SELECT 1"))
+                if test_stmt.scalar() != 1:
+                    raise FailedConnectToDatabase from None
+            except Exception as e:
+                main_logger.fatal(f"Failed to connect to database: {e}")
+                raise FailedConnectToDatabase from None
 
         main_logger.info(
             f"{title} fastapi app is successfully connected to database {settings.db.NAME}"
