@@ -1,7 +1,7 @@
 # 🚀 FastAPI Service Template
 
 [![FastAPI](https://img.shields.io/badge/-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/python-3.12-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.13-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/github/license/abcen7/fastapi-service-template?style=for-the-badge)](LICENSE)
 
@@ -29,7 +29,7 @@ This template simplifies the creation of FastAPI-based backend services with pre
 
 ## 🛠️ Tech Stack
 
-- **Python 3.11**
+- **Python 3.13**
 - **FastAPI**
 - **Async SQLAlchemy & PostgreSQL**
 - **Pydantic**
@@ -64,6 +64,13 @@ Copy `.env.example` to `.env` and update values:
 ```bash
 cp .env.example .env
 ```
+
+### Optional: Configure environment run in PyCharm
+
+If You are using pycharm as IDE for development,
+You need to set up the `working directory` as **`.`** **not app folder**
+
+This important for correct sourcing the environment variables which are located at root of the project: `.`
 
 ### Build & Run with Docker Compose:
 ```bash
