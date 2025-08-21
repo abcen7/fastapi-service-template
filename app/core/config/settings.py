@@ -80,9 +80,10 @@ class Settings(BaseSettings):
 
 try:
     settings = Settings(
-        db=DatabaseSettings(),
-        # app=ApplicationSettings(),
+        db=DatabaseSettings(),  # type: ignore
+        # app=ApplicationSettings(), # type: ignore
     )
+    main_logger.info(settings.db.asyncpg_url)
 except ValidationError as e:
     main_logger.critical("Some environment variables are incorrect.")
     main_logger.critical("Error in .env, validate the app/core/config/settings.py")

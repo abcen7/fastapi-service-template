@@ -1,20 +1,29 @@
-from typing import Sequence
+from typing import Annotated, Sequence
 
+from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import with_async_session
-
+from ..core.database.engine import get_async_session
 from .models import User
 
 
 class UsersRepository:
-    @with_async_session
-    async def create(self, user: User, session: AsyncSession) -> None:
-        session.add(user)
-        await session.commit()
+    def __init__(
+        self,
+        session: Annotated[AsyncSession, Depends(get_async_session)],
+    ):
+        self._session = session
 
-    @with_async_session
-    async def get_all(self, session: AsyncSession) -> Sequence[User]:
-        query = await session.execute(select(User))
+    async def create(
+        self,
+        user: User,
+    ) -> None:
+        self._session.add(user)
+        await self._session.commit()
+
+    async def get_all(
+        self,
+    ) -> Sequence[User]:
+        query = await self._session.execute(select(User))
         return query.scalars().all()

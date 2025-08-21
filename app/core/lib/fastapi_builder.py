@@ -1,10 +1,8 @@
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Never, Optional
+from typing import Any, AsyncIterator, Optional
 
-import asyncpg.exceptions
 from fastapi import FastAPI
 from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.cors import CORSMiddleware
 
 from .exceptions import FailedConnectToDatabase
@@ -13,7 +11,9 @@ from .prometheus import setup_monitoring
 
 
 def create_default_fastapi_app(
-    title: str, prometheus_setup: Optional[bool] = False, **kwargs: Any
+    title: str,
+    prometheus_setup: Optional[bool] = False,
+    **kwargs: Any,
 ) -> FastAPI:
     """
     Create and configure a default FastAPI application with CORS middleware and optional Prometheus monitoring.
@@ -32,7 +32,7 @@ def create_default_fastapi_app(
     """
 
     @asynccontextmanager
-    async def lifespan(_app: FastAPI) -> AsyncIterator[Never]:
+    async def lifespan(_app: FastAPI) -> AsyncIterator:
         from app.core.config import settings
 
         from ..database.engine import async_session_maker

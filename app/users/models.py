@@ -22,5 +22,7 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(String(32))
     last_name: Mapped[str] = mapped_column(String(32))
     bio: Mapped[Optional[str]] = mapped_column(
-        String(255), default=None, server_default=None
+        String(255),
+        default=None,
+        server_default=None,
     )
