@@ -25,7 +25,7 @@ async def get_all(
 @router.post(
     "",
     status_code=201,
-    response_model=None,
+    response_model=UserResponse,
 )
 async def create(
     users_service: Annotated[UsersService, Depends()],

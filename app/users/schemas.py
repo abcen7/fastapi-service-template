@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -14,3 +16,5 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     bio: str | None = None
+    created_at: datetime
+    updated_at: datetime
