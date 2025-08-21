@@ -11,8 +11,8 @@ class UsersService:
     def __init__(self, repository: Annotated[UsersRepository, Depends()]):
         self._repository = repository
 
-    async def create(self, user: UserCreate) -> None:
-        return await self._repository.create(User(**user.model_dump()))
+    async def create(self, user: UserCreate) -> User:
+        return await self._repository.create(user)
 
     async def get_all(self) -> Sequence[User]:
         return await self._repository.get_all()
