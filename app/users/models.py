@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -21,7 +19,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(32))
     first_name: Mapped[str] = mapped_column(String(32))
     last_name: Mapped[str] = mapped_column(String(32))
-    bio: Mapped[Optional[str]] = mapped_column(
+    bio: Mapped[str | None] = mapped_column(
         String(255),
         default=None,
         server_default=None,

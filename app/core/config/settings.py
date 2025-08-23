@@ -1,4 +1,6 @@
-from pydantic import PostgresDsn, computed_field
+from typing import Annotated
+
+from pydantic import UrlConstraints, computed_field
 from pydantic_core import MultiHostUrl, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -9,6 +11,24 @@ from app.core.lib.databases import Databases, PostgreSQLDrivers
 TODO: Please, add the settings of all services right here.
 """
 
+PostgresDsn = Annotated[
+    MultiHostUrl,
+    UrlConstraints(
+        host_required=True,
+        allowed_schemes=[
+            "postgres",
+            "postgresql",
+            "postgresql+asyncpg",
+            "postgresql+pg8000",
+            "postgresql+psycopg",
+            "postgresql+psycopg2",
+            "postgresql+psycopg2cffi",
+            "postgresql+py-postgresql",
+            "postgresql+pygresql",
+        ],
+    ),
+]
+
 
 class DatabaseSettings(BaseSettings):
     """
@@ -17,26 +37,18 @@ class DatabaseSettings(BaseSettings):
 
     ECHO_DEBUG_MODE: bool = False
     USED: Databases = Databases.PostgreSQL
-    HOST: str
-    PORT: int
-    USER: str
-    PASSWORD: str
-    NAME: str
+    HOST: str = "localhost"
+    PORT: int = 5432
+    USER: str = "postgres"
+    PASSWORD: str = "postgres"
+    NAME: str = "fst_db"
 
     model_config = SettingsConfigDict(env_prefix="DB_", env_file=".env")
 
     @computed_field
-    @property
     def postgres_url(self) -> PostgresDsn:
         """
         This is a computed field that generates a PostgresDsn URL
-
-        The URL is built using the MultiHostUrl.build method, which takes the following parameters:
-        - scheme: The scheme of the URL. In this case, it is "postgres".
-        - username: The username for the Postgres database, retrieved from the POSTGRES_USER environment variable.
-        - password: The password for the Postgres database, retrieved from the POSTGRES_PASSWORD environment variable.
-        - host: The host of the Postgres database, retrieved from the POSTGRES_HOST environment variable.
-        - path: The path of the Postgres database, retrieved from the POSTGRES_DB environment variable.
 
         Returns:
             PostgresDsn: The constructed PostgresDsn URL.
@@ -50,17 +62,9 @@ class DatabaseSettings(BaseSettings):
         )
 
     @computed_field
-    @property
     def asyncpg_url(self) -> PostgresDsn:
         """
         This is a computed field that generates a PostgresDsn URL for asyncpg.
-
-        The URL is built using the MultiHostUrl.build method, which takes the following parameters:
-        - scheme: The scheme of the URL. In this case, it is "postgresql+asyncpg".
-        - username: The username for the Postgres database, retrieved from the POSTGRES_USER environment variable.
-        - password: The password for the Postgres database, retrieved from the POSTGRES_PASSWORD environment variable.
-        - host: The host of the Postgres database, retrieved from the POSTGRES_HOST environment variable.
-        - path: The path of the Postgres database, retrieved from the POSTGRES_DB environment variable.
 
         Returns:
             PostgresDsn: The constructed PostgresDsn URL for asyncpg.
@@ -79,10 +83,7 @@ class Settings(BaseSettings):
 
 
 try:
-    settings = Settings(
-        db=DatabaseSettings(),  # type: ignore
-        # app=ApplicationSettings(), # type: ignore
-    )
+    settings = Settings()
     main_logger.info(settings.db.asyncpg_url)
 except ValidationError as e:
     main_logger.critical("Some environment variables are incorrect.")

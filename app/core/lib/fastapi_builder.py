@@ -12,7 +12,7 @@ from .prometheus import setup_monitoring
 
 def create_default_fastapi_app(
     title: str,
-    prometheus_setup: Optional[bool] = False,
+    prometheus_setup: bool | None = False,
     **kwargs: Any,
 ) -> FastAPI:
     """

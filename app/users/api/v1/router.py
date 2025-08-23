@@ -28,7 +28,10 @@ async def get_all(
     response_model=UserResponse,
 )
 async def create(
-    users_service: Annotated[UsersService, Depends()],
+    users_service: Annotated[
+        UsersService,
+        Depends(),
+    ],
     user: UserCreate,
 ):
     return await users_service.create(user)

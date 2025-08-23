@@ -15,4 +15,4 @@ class UsersService:
         return await self._repository.create(user)
 
     async def get_all(self) -> Sequence[User]:
-        return await self._repository.get_all()
+        return await self._repository.get_all(User.id == 1)
