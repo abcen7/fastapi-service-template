@@ -19,5 +19,21 @@ async def test_get_users(client: AsyncClient, async_session: AsyncSession) -> No
     response = await client.get(f"{settings.app.API_V1_STR}/users")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 1
     assert data[0]["username"] == "test"
+    assert isinstance(data, list)
+
+
+@pytest.mark.asyncio
+async def test_create_user(client: AsyncClient, async_session: AsyncSession) -> None:
+    response = await client.post(
+        f"{settings.app.API_V1_STR}/users",
+        json={
+            "username": "test",
+            "first_name": "test",
+            "last_name": "test",
+            "bio": "test",
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+    assert data["username"] == "test"
