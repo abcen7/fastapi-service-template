@@ -1,6 +1,5 @@
-from typing import Annotated, ClassVar
+from typing import ClassVar, Final
 
-from pydantic import UrlConstraints, computed_field
 from pydantic_core import MultiHostUrl, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -8,26 +7,17 @@ from app.core.lib import main_logger
 from app.core.lib.databases import Databases, PostgreSQLDrivers
 
 """
-TODO: Please, add the settings of all services right here.
+    This file represents the main config of all entire service
+    Adjust the settings of internal\external params right here.
 """
 
-PostgresDsn = Annotated[
-    MultiHostUrl,
-    UrlConstraints(
-        host_required=True,
-        allowed_schemes=[
-            "postgres",
-            "postgresql",
-            "postgresql+asyncpg",
-            "postgresql+pg8000",
-            "postgresql+psycopg",
-            "postgresql+psycopg2",
-            "postgresql+psycopg2cffi",
-            "postgresql+py-postgresql",
-            "postgresql+pygresql",
-        ],
-    ),
-]
+
+class ApplicationSettings(BaseSettings):
+    """
+    Represents the application settings
+    """
+
+    API_V1_STR: Final[str] = "/api/v1"
 
 
 class DatabaseSettings(BaseSettings):
@@ -42,17 +32,15 @@ class DatabaseSettings(BaseSettings):
     USER: str = "postgres"
     PASSWORD: str = "postgres"
     NAME: str = "fst_db"
+    TEST_DB_NAME: Final[str] = "test_db"
 
-    model_config = SettingsConfigDict(env_prefix="DB_", env_file=".env")
+    model_config = SettingsConfigDict(
+        env_prefix="DB_",
+        env_file=".env",
+    )
 
     @property
     def postgres_url(self) -> str:
-        """
-        This is a computed field that generates a PostgresDsn URL
-
-        Returns:
-            PostgresDsn: The constructed PostgresDsn URL.
-        """
         return str(
             MultiHostUrl.build(
                 scheme=PostgreSQLDrivers.DEFAULT_DIALECT,
@@ -66,12 +54,6 @@ class DatabaseSettings(BaseSettings):
 
     @property
     def asyncpg_url(self) -> str:
-        """
-        This is a computed field that generates a PostgresDsn URL for asyncpg.
-
-        Returns:
-            PostgresDsn: The constructed PostgresDsn URL for asyncpg.
-        """
         return str(
             MultiHostUrl.build(
                 scheme=f"{PostgreSQLDrivers.DEFAULT_DIALECT}+{PostgreSQLDrivers.DEFAULT_ASYNC_DRIVER}",
@@ -83,14 +65,27 @@ class DatabaseSettings(BaseSettings):
             )
         )
 
+    @property
+    def test_asyncpg_url(self) -> str:
+        return str(
+            MultiHostUrl.build(
+                scheme=f"{PostgreSQLDrivers.DEFAULT_DIALECT}+{PostgreSQLDrivers.DEFAULT_ASYNC_DRIVER}",
+                username=self.USER,
+                password=self.PASSWORD,
+                host=self.HOST,
+                port=self.PORT,
+                path=self.TEST_DB_NAME,
+            )
+        )
+
 
 class Settings(BaseSettings):
     db: ClassVar[DatabaseSettings] = DatabaseSettings()
+    app: ClassVar[ApplicationSettings] = ApplicationSettings()
 
 
 try:
     settings = Settings()
-    main_logger.info(settings.db.asyncpg_url)
 except ValidationError as e:
     main_logger.critical("Some environment variables are incorrect.")
     main_logger.critical("Error in .env, validate the app/core/config/settings.py")
