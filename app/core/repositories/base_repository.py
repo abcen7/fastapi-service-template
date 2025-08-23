@@ -11,7 +11,10 @@ from app.core.database.engine import get_async_session
 from .interfaces import EntityNotFoundError, IRepository
 
 
-class BaseRepository[BaseORMModel: Base, DTO: BaseModel](IRepository):
+class BaseRepository[
+    BaseORMModel: Base,
+    DTO: BaseModel,
+](IRepository):
     """
     Base implementation of repository pattern with CRUD operations.
     Concrete repositories must set `_db_model`.
