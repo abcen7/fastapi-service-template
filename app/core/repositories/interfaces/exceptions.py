@@ -1,10 +1,10 @@
 from fastapi import HTTPException
 from starlette import status
 
-from .generics_types import BaseORMModel
+from app.core.database import Base
 
 
-class EntityNotFoundError(HTTPException):
+class EntityNotFoundError[BaseORMModel: Base](HTTPException):
     """If entity with specific id wasn't found"""
 
     def __init__(

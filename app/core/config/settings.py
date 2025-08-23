@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, ClassVar
 
 from pydantic import UrlConstraints, computed_field
 from pydantic_core import MultiHostUrl, ValidationError
@@ -45,41 +45,47 @@ class DatabaseSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_prefix="DB_", env_file=".env")
 
-    @computed_field
-    def postgres_url(self) -> PostgresDsn:
+    @property
+    def postgres_url(self) -> str:
         """
         This is a computed field that generates a PostgresDsn URL
 
         Returns:
             PostgresDsn: The constructed PostgresDsn URL.
         """
-        return MultiHostUrl.build(
-            scheme=PostgreSQLDrivers.DEFAULT_DIALECT,
-            username=self.USER,
-            password=self.PASSWORD,
-            host=self.HOST,
-            path=self.NAME,
+        return str(
+            MultiHostUrl.build(
+                scheme=PostgreSQLDrivers.DEFAULT_DIALECT,
+                username=self.USER,
+                password=self.PASSWORD,
+                host=self.HOST,
+                port=self.PORT,
+                path=self.NAME,
+            )
         )
 
-    @computed_field
-    def asyncpg_url(self) -> PostgresDsn:
+    @property
+    def asyncpg_url(self) -> str:
         """
         This is a computed field that generates a PostgresDsn URL for asyncpg.
 
         Returns:
             PostgresDsn: The constructed PostgresDsn URL for asyncpg.
         """
-        return MultiHostUrl.build(
-            scheme=f"{PostgreSQLDrivers.DEFAULT_DIALECT}+{PostgreSQLDrivers.DEFAULT_ASYNC_DRIVER}",
-            username=self.USER,
-            password=self.PASSWORD,
-            host=self.HOST,
-            path=self.NAME,
+        return str(
+            MultiHostUrl.build(
+                scheme=f"{PostgreSQLDrivers.DEFAULT_DIALECT}+{PostgreSQLDrivers.DEFAULT_ASYNC_DRIVER}",
+                username=self.USER,
+                password=self.PASSWORD,
+                host=self.HOST,
+                port=self.PORT,
+                path=self.NAME,
+            )
         )
 
 
 class Settings(BaseSettings):
-    db: DatabaseSettings = DatabaseSettings()
+    db: ClassVar[DatabaseSettings] = DatabaseSettings()
 
 
 try:

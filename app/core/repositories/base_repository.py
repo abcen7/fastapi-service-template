@@ -1,22 +1,17 @@
-from typing import Any, Generic
+from typing import Any
 
 from fastapi import Depends
+from pydantic import BaseModel
 from sqlalchemy import ColumnExpressionArgument, delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.database import Base
 from app.core.database.engine import get_async_session
-from app.core.repositories.interfaces import (
-    DTO,
-    BaseORMModel,
-    EntityNotFoundError,
-    IRepository,
-)
+
+from .interfaces import EntityNotFoundError, IRepository
 
 
-class BaseRepository(
-    IRepository[BaseORMModel, DTO],
-    Generic[BaseORMModel, DTO],
-):
+class BaseRepository[BaseORMModel: Base, DTO: BaseModel](IRepository):
     """
     Base implementation of repository pattern with CRUD operations.
     Concrete repositories must set `_db_model`.

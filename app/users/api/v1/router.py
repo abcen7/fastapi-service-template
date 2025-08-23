@@ -1,7 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Sequence
 
 from fastapi import APIRouter, Depends
 
+from app.users import User
 from app.users.schemas import UserCreate, UserResponse
 from app.users.services import UsersService
 
@@ -18,7 +19,7 @@ async def get_all(
         UsersService,
         Depends(),
     ],
-):
+) -> Sequence[User]:
     return await users_service.get_all()
 
 
@@ -33,5 +34,5 @@ async def create(
         Depends(),
     ],
     user: UserCreate,
-):
+) -> User:
     return await users_service.create(user)

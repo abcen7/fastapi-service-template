@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Generic
+from typing import Any
 
-from .generics_types import BaseORMModel
+from sqlalchemy import ColumnExpressionArgument
+
+from app.core.database import Base
 
 
-class IReadRepository(
-    ABC,
-    Generic[BaseORMModel],
-):
+class IReadRepository[BaseORMModel: Base](ABC):
     """
     Readonly interface for reading from database
     For clients which doesn't need the writeable operations could be extended by IReadRepository
@@ -16,31 +15,27 @@ class IReadRepository(
     @abstractmethod
     async def get_one(
         self,
-        *where,
-        **filter_by,
-    ) -> BaseORMModel:
-        ...
+        *where: ColumnExpressionArgument[bool],
+        **filter_by: Any,
+    ) -> BaseORMModel: ...
 
     @abstractmethod
     async def get_one_or_none(
         self,
-        *where,
-        **filter_by,
-    ) -> BaseORMModel | None:
-        ...
+        *where: ColumnExpressionArgument[bool],
+        **filter_by: Any,
+    ) -> BaseORMModel | None: ...
 
     @abstractmethod
     async def get_all(
         self,
-        *where,
-        **filter_by,
-    ) -> list[BaseORMModel]:
-        ...
+        *where: ColumnExpressionArgument[bool],
+        **filter_by: Any,
+    ) -> list[BaseORMModel]: ...
 
     @abstractmethod
     async def count(
         self,
-        *where,
-        **filter_by,
-    ) -> int:
-        ...
+        *where: ColumnExpressionArgument[bool],
+        **filter_by: Any,
+    ) -> int: ...

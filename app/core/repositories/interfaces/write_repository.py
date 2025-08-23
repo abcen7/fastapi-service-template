@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import Generic
+from typing import Any, Generic
 
-from .generics_types import DTO, BaseORMModel
+from pydantic import BaseModel
+
+from ...database import Base
 
 
-class IWriteRepository(
-    ABC,
-    Generic[BaseORMModel, DTO],
-):
+class IWriteRepository[
+    BaseORMModel: Base,
+    DTO: BaseModel,
+](ABC):
     """
     Write only interface for implementing writing operations in database
     For clients which doesn't need the readable operations could be extended by IWriteRepository
@@ -17,27 +19,23 @@ class IWriteRepository(
     async def create(
         self,
         dto: DTO,
-    ) -> BaseORMModel:
-        ...
+    ) -> BaseORMModel: ...
 
     @abstractmethod
     async def update(
         self,
         id_: int,
-        **values,
-    ) -> BaseORMModel:
-        ...
+        **values: Any,
+    ) -> BaseORMModel: ...
 
     @abstractmethod
     async def delete(
         self,
         id_: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
     async def create_many(
         self,
         dto_list: list[DTO],
-    ) -> list[BaseORMModel]:
-        ...
+    ) -> list[BaseORMModel]: ...

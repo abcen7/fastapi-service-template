@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.core.config import settings
 
 async_engine = create_async_engine(
-    settings.db.asyncpg_url.unicode_string(),
+    settings.db.asyncpg_url,
     echo=settings.db.ECHO_DEBUG_MODE,
 )
 async_session_maker = async_sessionmaker(async_engine, expire_on_commit=False)
@@ -22,26 +22,5 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-def with_async_session(func):
-    """
-    Decorator for async session.
-
-    Args:
-        func (function): The function to decorate.
-
-    Returns:
-        function: The decorated function.
-    """
-
-    async def wrapper(*args, **kwargs):
-        if "session" in kwargs and kwargs["session"] is not None:
-            return await func(*args, **kwargs)
-        async for session in get_async_session():
-            return await func(*args, session=session, **kwargs)
-        return None
-
-    return wrapper
-
-
-def load_models():
-    from app.users import User  # type: ignore
+def load_models() -> None:
+    from app.users import User
